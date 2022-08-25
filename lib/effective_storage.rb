@@ -6,9 +6,13 @@ require 'effective_storage/version'
 module EffectiveStorage
 
   def self.config_keys
-    [:layout]
+    [:layout, :authorize_active_storage]
   end
 
   include EffectiveGem
+
+  def self.authorize_active_storage?
+    authorize_active_storage == true
+  end
 
 end

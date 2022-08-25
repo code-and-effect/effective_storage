@@ -10,6 +10,7 @@ EffectiveStorage::Engine.routes.draw do
   end
 
   namespace :admin do
+    get '/storage', to: 'storage#index', as: :storage
   end
 
 end
