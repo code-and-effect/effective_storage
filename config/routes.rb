@@ -5,11 +5,12 @@ Rails.application.routes.draw do
 end
 
 EffectiveStorage::Engine.routes.draw do
-  # Public routes
-  scope module: 'effective' do
-  end
-
   namespace :admin do
+    resources :storage, only: [] do
+      post :mark_inherited, on: :member
+      post :mark_public, on: :member
+    end
+
     get '/storage', to: 'storage#index', as: :storage
   end
 

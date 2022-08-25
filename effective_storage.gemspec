@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Code and Effect']
   spec.email       = ['info@codeandeffect.com']
   spec.homepage    = 'https://github.com/code-and-effect/effective_storage'
-  spec.summary     = 'Browse uploaded Active Storage blobs and attachments'
-  spec.description = 'Browse uploaded Active Storage blobs and attachments'
+  spec.summary     = 'Authorize and browse Active Storage attachments'
+  spec.description = 'Authorize and browse Active Storage attachments'
   spec.license     = 'MIT'
 
   spec.files = Dir["{app,config,db,lib}/**/*"] + ['MIT-LICENSE', 'Rakefile', 'README.md']

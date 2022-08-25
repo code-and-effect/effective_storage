@@ -1,0 +1,8 @@
+%h1.effective-admin-heading= @page_title
+
+= collapse('Show legend') do
+  %ul
+    %li Inherited - If the resource is public, anyone may access the file without signing in. If the resource has restricted access, only signed in users who can access the resource are able to access the file. This is the default permission.
+    %li Public - Anyone may access the file without signing in, regardless of the resource's access restrictions.
+
+= render_datatable @datatable

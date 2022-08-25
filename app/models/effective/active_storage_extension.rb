@@ -2,7 +2,7 @@ module Effective
   class ActiveStorageExtension < ActiveRecord::Base
     belongs_to :attachment, class_name: 'ActiveStorage::Attachment'
 
-    PERMISSIONS = ['default', 'public']
+    PERMISSIONS = ['inherited', 'public']
 
     effective_resource do
       permission :string
@@ -19,8 +19,8 @@ module Effective
       permission.presence || 'active storage extension'
     end
 
-    def permission_default?
-      permission == 'default'
+    def permission_inherited?
+      permission == 'inherited'
     end
 
     def permission_public?

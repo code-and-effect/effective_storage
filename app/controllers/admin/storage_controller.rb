@@ -5,6 +5,8 @@ module Admin
 
     include Effective::CrudController
 
+    page_title 'Storage'
+
     resource_scope -> { ActiveStorage::Attachment.all }
     datatable -> { Admin::EffectiveStorageDatatable.new }
 

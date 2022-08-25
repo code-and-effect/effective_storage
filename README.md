@@ -1,8 +1,10 @@
 # Effective Storage
 
-Browse uploaded Active Storage blobs and attachments
+Adds an authentication layer to the Active Storage downloads controller.
 
-Authorization and permissions for uploaded files
+Authorizes the user downloading each file and raises an exception for unauthorized requests.
+
+Adds an admin screen to browse Active Storage attachments and mark them as inherited or public.
 
 ## Getting Started
 
@@ -41,20 +43,11 @@ Then migrate the database:
 rake db:migrate
 ```
 
-Please add the following to your User model:
-
-```
-```
-
-and
-
-```
 Add a link to the admin menu:
 
 ```haml
-- if can? :admin, :effective_storage
-  - if can? :index, Effective::Storage
-    = nav_link_to 'Storage', effective_storage.admin_storages_path
+- if can?(:admin, :effective_storage) && can?(:index, ActiveStorage::Attachment)
+  = nav_link_to 'Storage', effective_storage.admin_storage_path
 ```
 
 ## Configuration
@@ -63,25 +56,19 @@ Add a link to the admin menu:
 
 All authorization checks are handled via the effective_resources gem found in the `config/initializers/effective_resources.rb` file.
 
-## Effective Roles
-
-This gem works with effective roles for the representative roles.
-
-Configure your `config/initializers/effective_roles.rb` something like this:
-
-```
-```
-
 ## Permissions
 
 The permissions you actually want to define are as follows (using CanCan):
 
 ```ruby
+can(:show, ActiveStorage::Attachment) { |attachment| attachment.permission_public? }
+
 if user.persisted?
 end
 
 if user.admin?
   can :admin, :effective_storage
+  can :index, ActiveStorage::Attachment
 end
 ```
 

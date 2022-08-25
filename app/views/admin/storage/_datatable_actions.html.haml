@@ -1,0 +1,8 @@
+= dropdown(variation: :dropleft) do
+  - if EffectiveResources.authorized?(self, :mark_inherited, attachment)
+    = dropdown_link_to 'Mark as Inherited', effective_storage.mark_inherited_admin_storage_path(attachment),
+      data: { method: :post, remote: true, confirm: "Mark as Inherited Permission?" }
+
+  - if EffectiveResources.authorized?(self, :mark_public, attachment)
+    = dropdown_link_to 'Mark as Public', effective_storage.mark_public_admin_storage_path(attachment),
+      data: { method: :post, remote: true, confirm: "Mark as Public Permission?" }

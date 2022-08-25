@@ -5,6 +5,5 @@ EffectiveStorage.setup do |config|
 
   # Perform authorization on ActiveStorage downloads
   # When false any request will be permitted (the default)
-  config.authorize_active_storage = false
-
+  config.authorize_active_storage = true
 end

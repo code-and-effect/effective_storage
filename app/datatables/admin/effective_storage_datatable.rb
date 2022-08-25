@@ -30,33 +30,33 @@ module Admin
         link_to(record, url, target: '_blank') if url
       end
 
-      col 'blob.filename' do |attachment|
+      col :filename, label: 'File' do |attachment|
         content_tag(:div, class: 'col-resource_item') do
           link_to(attachment.blob.filename, url_for(attachment.blob), target: '_blank')
         end
       end
 
-      col 'blob.content_type'
+      col :permission, search: Effective::ActiveStorageExtension::PERMISSIONS do |attachment|
+        if attachment.permission_public?
+          content_tag(:span, attachment.permission, class: 'badge badge-warning')
+        else
+          content_tag(:span, attachment.permission, class: 'badge badge-info')
+        end
+      end
 
-      col 'blob.byte_size' do |attachment|
+      col :content_type do |attachment|
+        attachment.blob.content_type
+      end
+
+      col :byte_size do |attachment|
         number_to_human_size(attachment.blob.byte_size)
       end
 
-      actions_col
-
-      # actions_col(destroy: false) do |attachment|
-      #   if can?(:destroy, attachment)
-      #     dropdown_link_to('Delete', admin_attachment_path(attachment), data: { method: :delete, confirm: "Really delete #{attachment.blob.filename}?"})
-      #   end
-      # end
-
+      actions_col partial: 'admin/storage/datatable_actions', partial_as: :attachment
     end
 
-    # If we're passed a user_id, we want all the Attachments for this user
-    # Accross all applicants
     collection do
-      attachments = ActiveStorage::Attachment.all.joins(:blob)
-      attachments
+      ActiveStorage::Attachment.all.deep
     end
 
   end

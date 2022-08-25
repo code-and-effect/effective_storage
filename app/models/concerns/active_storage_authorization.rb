@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# This is included by upside config/initializers/active_storage_authorization.rb
-# If you want to turn this off, best to do it there.
+# This authorizes all ActiveStorage downloads
+# This is included automatically by the engine
+# It can be disabled by setting config.authorize_active_storage = false in config/initializers/effective_storage.rb
 #
 # There are 3 ways to add permissions:
 # 1.) can?(:show, resource)
@@ -20,8 +21,6 @@ module ActiveStorageAuthorization
   # Authorize ActiveStorage DiskController downloads
   # Used for local storage
   def authorize_active_storage_download!
-    Rails.logger.info "===== Authorizing Active Storage Download"
-
     @blob || set_download_blob()
     authorize_active_storage!
   end
@@ -29,8 +28,6 @@ module ActiveStorageAuthorization
   # Authorize ActiveStorage Blob and Representation redirects
   # Used for amazon storage
   def authorize_active_storage_redirect!
-    Rails.logger.info "===== Authorizing Active Storage Redirect"
-
     @blob || set_blob()
     authorize_active_storage!
   end
@@ -49,6 +46,10 @@ module ActiveStorageAuthorization
   end
 
   private
+
+  def set_download_blob
+    @blob ||= ActiveStorage::Blob.where(key: decode_verified_key().try(:dig, :key)).first
+  end
 
   # Authorize the current blob and prevent it from being served if unauthorized
   def authorize_active_storage!
@@ -88,41 +89,35 @@ module ActiveStorageAuthorization
   end
 
   # This is a file that was drag & drop or inserted into the article editor
-  # This isn't currently used in upside, but will be "one day"
+  # I think this might only happen with article editor edit screens
   def authorize_content_download?(blob)
-    Rails.logger.info "===== authorize content download?"
-
     # Allow signed out users to view images
-    # return true if blob.image?
+    return true if blob.image?
 
     # Require sign in to view any attached files
-    # current_user.present?
-
-    # Allow public users
-    true
+    current_user.present?
   end
 
   # This was included and resized in an ActionText::RichText object
   # But these ones don't belong_to any record
   def authorized_variant_download?(attachment)
-    Rails.logger.info "===== authorize variant download?"
-
     attachment.record_type == 'ActiveStorage::VariantRecord'
   end
 
   # This is a has_one_attached or has_many_attached record
   # Or an ActionText::RichText object, that belongs_to a record
   def authorized_attachment_download?(attachment)
-    Rails.logger.info "===== authorize attachment download?"
-
     return false if attachment.record.blank?
 
+    # Associated Record
     record = attachment.record
     return true if authorized?(record)
 
+    # ActionText::RichText
     resource = record.record if record.respond_to?(:record)
     return true if authorized?(resource)
 
+    # Attachment itself
     return true if authorized?(attachment)
 
     false
@@ -138,18 +133,12 @@ module ActiveStorageAuthorization
     false
   end
 
-  def set_download_blob
-    @blob ||= ActiveStorage::Blob.where(key: decode_verified_key().try(:dig, :key)).first
-  end
-
   def current_user
-    defined?(Tenant) ? send("current_#{Tenant.current}_user") : super()
+    (defined?(Tenant) ? send("current_#{Tenant.current}_user") : super)
   end
 
   def current_ability
-    @current_ability ||= begin
-      defined?(tenant) ? Tenant.Ability.new(current_user) : Ability.new(current_user)
-    end
+    @current_ability ||= (defined?(Tenant) ? Tenant.Ability.new(current_user) : super)
   end
 
 end
