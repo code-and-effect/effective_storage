@@ -6,9 +6,7 @@ require 'effective_storage/version'
 module EffectiveStorage
 
   def self.config_keys
-    [
-      :layout
-    ]
+    [:layout]
   end
 
   include EffectiveGem

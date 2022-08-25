@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
+ActiveRecord::Schema.define(version: 4) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +42,13 @@ ActiveRecord::Schema.define(version: 3) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_extensions", force: :cascade do |t|
+    t.integer "blob_id"
+    t.string "permission"
+    t.datetime "updated_at"
+    t.datetime "created_at"
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|

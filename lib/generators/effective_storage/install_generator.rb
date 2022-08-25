@@ -1,4 +1,4 @@
-module EffectiveMemberships
+module EffectiveStorage
   module Generators
     class InstallGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
@@ -20,8 +20,6 @@ module EffectiveMemberships
       end
 
       def create_migration_file
-        @storage_table_name  = ':' + EffectiveStorage.storage_table_name.to_s
-
         migration_template ('../' * 3) + 'db/migrate/01_create_effective_storage.rb.erb', 'db/migrate/create_effective_storage.rb'
       end
 
