@@ -6,15 +6,7 @@ module Admin
     include Effective::CrudController
 
     page_title 'Storage'
-
     resource_scope -> { ActiveStorage::Blob.all }
     datatable -> { Admin::EffectiveStorageDatatable.new }
-
-    private
-
-    def permitted_params
-      params.require(:active_storage_extension).permit!
-    end
-
   end
 end
