@@ -10,7 +10,7 @@ module EffectiveStorage
     # Include active_storage_attachment_extension concern
     initializer 'effective_storage.active_storage_attachment_extension' do |app|
       app.config.to_prepare do
-        ActiveStorage::Attachment.include(ActiveStorageAttachmentExtension)
+        ActiveStorage::Blob.include(ActiveStorageBlobExtension)
       end
     end
 

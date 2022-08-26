@@ -55,6 +55,9 @@ module ActiveStorageAuthorization
   def authorize_active_storage!
     return unless @blob.present?
 
+    # If the blob has been given permission
+    return true if authorized?(@blob)
+
     # If the blob is not attached to anything, permit the blob
     return true if @blob.attachments.blank? && authorize_content_download?(@blob)
 

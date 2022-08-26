@@ -7,7 +7,7 @@ module Admin
 
     page_title 'Storage'
 
-    resource_scope -> { ActiveStorage::Attachment.all }
+    resource_scope -> { ActiveStorage::Blob.all }
     datatable -> { Admin::EffectiveStorageDatatable.new }
 
     private

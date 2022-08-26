@@ -1,12 +1,14 @@
 # This is included into ActiveStorage::Attachment automatically by engine.rb
-module ActiveStorageAttachmentExtension
+module ActiveStorageBlobExtension
   extend ActiveSupport::Concern
 
   included do
-    has_many :active_storage_extensions, class_name: 'Effective::ActiveStorageExtension', inverse_of: :attachment, dependent: :destroy
+    has_many :active_storage_extensions, class_name: 'Effective::ActiveStorageExtension', inverse_of: :blob, dependent: :destroy
     accepts_nested_attributes_for :active_storage_extensions, allow_destroy: true
 
-    scope :deep, -> { includes(:active_storage_extensions, :blob, record: :record) }
+    scope :deep, -> { includes(:active_storage_extensions, attachments: [record: :record]) }
+
+    scope :attached, -> { joins(:attachments) }
   end
 
   module ClassMethods
@@ -15,7 +17,7 @@ module ActiveStorageAttachmentExtension
   # Instance methods
 
   def to_s
-    'attachment'
+    filename.presence || 'blob'
   end
 
   # Find or build
@@ -43,6 +45,10 @@ module ActiveStorageAttachmentExtension
   def mark_public!
     active_storage_extension.assign_attributes(permission: 'public')
     save!
+  end
+
+  def purge!
+    purge
   end
 
 end

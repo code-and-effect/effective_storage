@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 4) do
   end
 
   create_table "active_storage_extensions", force: :cascade do |t|
-    t.integer "attachment_id"
+    t.integer "blob_id"
     t.string "permission"
     t.datetime "updated_at"
     t.datetime "created_at"

@@ -61,14 +61,23 @@ All authorization checks are handled via the effective_resources gem found in th
 The permissions you actually want to define are as follows (using CanCan):
 
 ```ruby
-can(:show, ActiveStorage::Attachment) { |attachment| attachment.permission_public? }
+# Allow anyone to download a public file
+can(:show, ActiveStorage::Blob) { |blob| blob.permission_public? }
 
 if user.persisted?
 end
 
 if user.admin?
+  # This allows the admin to download any file
+  can :show, ActiveStorage::Blob
+
+  # Allows them to see the index screen
   can :admin, :effective_storage
-  can :index, ActiveStorage::Attachment
+  can :index, ActiveStorage::Blob
+
+  # Admin screen actions
+  can(:mark_inherited, ActiveStorage::Blob) { |blob| !blob.permission_inherited? }
+  can(:mark_public, ActiveStorage::Blob) { |blob| !blob.permission_public? }
 end
 ```
 

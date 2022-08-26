@@ -1,6 +1,6 @@
 module Effective
   class ActiveStorageExtension < ActiveRecord::Base
-    belongs_to :attachment, class_name: 'ActiveStorage::Attachment'
+    belongs_to :blob, class_name: 'ActiveStorage::Blob'
 
     PERMISSIONS = ['inherited', 'public']
 
