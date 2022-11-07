@@ -15,7 +15,7 @@ module ActiveStorageAuthorization
   extend ActiveSupport::Concern
 
   included do
-    rescue_from(Exception, with: :unauthorized_active_storage_request)
+    rescue_from(Effective::UnauthorizedStorageException, with: :unauthorized_active_storage_request)
   end
 
   # Authorize ActiveStorage DiskController downloads
@@ -88,7 +88,7 @@ module ActiveStorageAuthorization
 
     resolution = "Missing can?(:show, #{(resource || record || attachment).class.name})"
 
-    raise(error + '. ' + resolution)
+    raise Effective::UnauthorizedStorageException.new(error + '. ' + resolution)
   end
 
   # This is a file that was drag & drop or inserted into the article editor
