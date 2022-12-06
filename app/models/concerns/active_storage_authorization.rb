@@ -68,7 +68,7 @@ module ActiveStorageAuthorization
     return true if @blob.attachments.any? { |attachment| authorized_attachment_download?(attachment) }
 
     # Otherwise raise a 403 Forbidden and block the download
-    head :forbidden
+    head(:forbidden, 'X-Robots-Tag': 'noindex')
 
     # Raise an exception to log unauthorized request
     raise_exception()
