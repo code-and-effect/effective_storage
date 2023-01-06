@@ -98,7 +98,10 @@ module ActiveStorageAuthorization
     return true if blob.image?
 
     # Require sign in to view any attached files
-    current_user.present?
+    # current_user.present?
+
+    # Let anyone view these files
+    true
   end
 
   # This was included and resized in an ActionText::RichText object
