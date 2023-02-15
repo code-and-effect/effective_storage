@@ -113,7 +113,8 @@ module ActiveStorageAuthorization
   # This is a has_one_attached or has_many_attached record
   # Or an ActionText::RichText object, that belongs_to a record
   def authorized_attachment_download?(attachment)
-    return false if attachment.record.blank?
+    # DO NOT USE .blank? or .present? here. They return incorrect values.
+    return false if attachment.record.nil?
 
     # Associated Record
     record = attachment.record
