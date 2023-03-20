@@ -47,8 +47,55 @@ module ActiveStorageBlobExtension
     save!
   end
 
+  # The purge! command is not part of the regular ActiveStorage::Blob class
+  # This is the command called by the admin/storage datatable
+  # When config.never_delete_active_storage is enabled, this is the only way to delete a Blob
+  # And they will not be deleted in the background.
   def purge!
-    purge
+    before = EffectiveStorage.never_delete
+
+    begin
+      EffectiveStorage.never_delete = false
+      purge
+    ensure
+      EffectiveStorage.never_delete = before
+    end
+  end
+
+  def delete
+    if EffectiveStorage.never_delete?
+      Rails.logger.info "[effective_storage] Skipping ActiveStorage::Blob delete"
+      return
+    end
+
+    super
+  end
+
+  def destroy
+    if EffectiveStorage.never_delete?
+      Rails.logger.info "[effective_storage] Skipping ActiveStorage::Blob destroy"
+      return
+    end
+
+    super
+  end
+
+  def purge
+    if EffectiveStorage.never_delete?
+      Rails.logger.info "[effective_storage] Skipping ActiveStorage::Blob purge"
+      return
+    end
+
+    super
+  end
+
+  def purge_later
+    if EffectiveStorage.never_delete?
+      Rails.logger.info "[effective_storage] Skipping ActiveStorage::Blob purge_later"
+      return
+    end
+
+    super
   end
 
 end

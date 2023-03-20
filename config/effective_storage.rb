@@ -6,4 +6,7 @@ EffectiveStorage.setup do |config|
   # Perform authorization on ActiveStorage downloads
   # When false any request will be permitted (the default)
   config.authorize_active_storage = true
+
+  # Do not delete ActiveStorage::Blobs
+  config.never_delete = true
 end
