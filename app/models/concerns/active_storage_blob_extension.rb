@@ -9,6 +9,8 @@ module ActiveStorageBlobExtension
     scope :deep, -> { includes(:active_storage_extensions, attachments: [record: :record]) }
 
     scope :attached, -> { joins(:attachments) }
+    scope :unattached, -> { where.not(id: attached) }
+
   end
 
   module ClassMethods
