@@ -9,4 +9,9 @@ EffectiveStorage.setup do |config|
 
   # Do not delete ActiveStorage::Blobs
   config.never_delete = true
+
+  # Skip Notifications for unauthorized active storage requests
+  # config.skip_notification = true
+  # config.skip_notification = ['Effective::Classified']
+
 end

@@ -35,7 +35,6 @@ module ActiveStorageAuthorization
   # Send an ExceptionNotification email with the unauthorized details
   # This is not visible to users
   def unauthorized_active_storage_request(exception)
-    return if request.referer.to_s.include?('.test:')
 
     if defined?(ExceptionNotifier)
       data = { 'current_user_id': current_user&.id || 'none' }.merge(@blob&.attributes || {})
@@ -79,6 +78,8 @@ module ActiveStorageAuthorization
     record = attachment.record if attachment
     resource = record.record if record.respond_to?(:record)
 
+    return if skip_notification?(record || resource || @blob)
+
     error = [
       "unauthorized active storage request for #{@blob.filename}",
       ("on #{record.class.name} #{record.id}" if record.present?),
@@ -89,6 +90,14 @@ module ActiveStorageAuthorization
     resolution = "Missing can?(:show, #{(resource || record || attachment).class.name})"
 
     raise Effective::UnauthorizedStorageException.new(error + '. ' + resolution)
+  end
+
+  def skip_notification?(resource)
+    return true if EffectiveStorage.skip_notification?
+    return true if EffectiveStorage.skip_notifications.include?(resource.class.name)
+    return true if request.referer.to_s.include?('.test:')
+
+    false
   end
 
   # This is a file that was drag & drop or inserted into the article editor

@@ -6,7 +6,7 @@ require 'effective_storage/version'
 module EffectiveStorage
 
   def self.config_keys
-    [:layout, :authorize_active_storage, :never_delete]
+    [:layout, :authorize_active_storage, :never_delete, :skip_notification]
   end
 
   include EffectiveGem
@@ -17,6 +17,14 @@ module EffectiveStorage
 
   def self.never_delete?
     never_delete == true
+  end
+
+  def self.skip_notification?
+    skip_notification == true
+  end
+
+  def self.skip_notifications
+    Array(skip_notification)
   end
 
 end
