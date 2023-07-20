@@ -7,7 +7,7 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 require 'devise'
-require 'haml-rails'
+require 'haml'
 
 module Dummy
   class Application < Rails::Application
