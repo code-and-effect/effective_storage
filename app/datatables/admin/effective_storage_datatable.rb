@@ -56,6 +56,10 @@ module Admin
         end.join.html_safe
       end
 
+      col :bucket, visible: false do |blob|
+        blob.attachments.map { |attachment| attachment.name }.join.html_safe
+      end
+
       col :filename, label: 'File' do |blob|
         content_tag(:div, class: 'col-resource_item') do
           link_to(blob.filename, url_for(blob), target: '_blank')
@@ -80,7 +84,15 @@ module Admin
     end
 
     collection do
-      ActiveStorage::Blob.all.deep.left_outer_joins(:attachments)
+      scope = ActiveStorage::Blob.all.deep.left_outer_joins(:attachments)
+
+      if attributes[:resource_id].present? && attributes[:resource_type].present?
+        attachments = ActiveStorage::Attachment.where(record_id: attributes[:resource_id], record_type: attributes[:resource_type])
+        scope = scope.where(id: attachments.select(:blob_id))
+      end
+
+      scope
+
     end
 
   end
