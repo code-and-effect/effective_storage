@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    effective_storage (0.4.2)
+    effective_storage (0.4.4)
       effective_bootstrap
       effective_datatables (>= 4.0.0)
       effective_resources
@@ -69,7 +69,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    autoprefixer-rails (10.4.13.0)
+    autoprefixer-rails (10.4.16.0)
       execjs (~> 2)
     bcrypt (3.1.16)
     bootstrap (4.6.2)
@@ -88,14 +88,14 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.9)
     crass (1.0.6)
-    date (3.3.3)
+    date (3.3.4)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    effective_bootstrap (1.14.10)
+    effective_bootstrap (1.17.6)
       bootstrap (< 5)
       coffee-rails
       effective_resources
@@ -104,19 +104,21 @@ GEM
       jquery-rails
       rails (>= 4.0.0)
       sassc
-    effective_datatables (4.17.3)
+      sprockets-rails
+    effective_datatables (4.20.6)
       coffee-rails
       effective_bootstrap
       effective_resources
       rails (>= 3.2.0)
       sassc
-    effective_resources (2.8.7)
-      rails (>= 4.0.0)
+    effective_resources (2.18.4)
+      rails
+      sprockets-rails
     erubi (1.10.0)
-    execjs (2.8.1)
-    ffi (1.15.5)
-    globalid (1.1.0)
-      activesupport (>= 5.0)
+    execjs (2.9.1)
+    ffi (1.16.3)
+    globalid (1.2.1)
+      activesupport (>= 6.1)
     haml (5.2.2)
       temple (>= 0.8.0)
       tilt
@@ -139,19 +141,19 @@ GEM
       net-smtp
     marcel (1.0.2)
     method_source (1.0.0)
-    mini_mime (1.1.2)
+    mini_mime (1.1.5)
     mini_portile2 (2.8.4)
     minitest (5.14.4)
-    net-imap (0.3.6)
+    net-imap (0.4.7)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
-    net-protocol (0.2.1)
+    net-protocol (0.2.2)
       timeout
-    net-smtp (0.3.3)
+    net-smtp (0.4.0)
       net-protocol
-    nio4r (2.5.9)
+    nio4r (2.6.1)
     nokogiri (1.15.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -216,12 +218,12 @@ GEM
     temple (0.8.2)
     thor (1.1.0)
     tilt (2.0.10)
-    timeout (0.4.0)
+    timeout (0.4.1)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
-    websocket-driver (0.7.5)
+    websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     zeitwerk (2.5.1)
