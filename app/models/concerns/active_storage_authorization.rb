@@ -54,17 +54,17 @@ module ActiveStorageAuthorization
   def authorize_active_storage!
     return unless @blob.present?
 
-    # If the blob has been given permission
-    return true if authorized?(@blob)
-
     # If the blob is not attached to anything, permit the blob
-    return true if @blob.attachments.blank? && authorize_content_download?(@blob)
+    return true if @blob.attachments.blank?
 
     # If the blob is an ActiveStorage::Variant it's been previously authorized
     return true if @blob.attachments.any? { |attachment| authorized_variant_download?(attachment) }
 
     # If we are authorized on any attached record, permit the download
     return true if @blob.attachments.any? { |attachment| authorized_attachment_download?(attachment) }
+
+    # If the blob has been given permission using Mark Public
+    return true if authorized?(@blob)
 
     # Otherwise raise a 404 Not Found and block the download
     head(:not_found)
@@ -100,19 +100,6 @@ module ActiveStorageAuthorization
     false
   end
 
-  # This is a file that was drag & drop or inserted into the article editor
-  # I think this might only happen with article editor edit screens
-  def authorize_content_download?(blob)
-    # Allow signed out users to view images
-    return true if blob.image?
-
-    # Require sign in to view any attached files
-    # current_user.present?
-
-    # Let anyone view these files
-    true
-  end
-
   # This was included and resized in an ActionText::RichText object
   # But these ones don't belong_to any record
   def authorized_variant_download?(attachment)
@@ -122,19 +109,20 @@ module ActiveStorageAuthorization
   # This is a has_one_attached or has_many_attached record
   # Or an ActionText::RichText object, that belongs_to a record
   def authorized_attachment_download?(attachment)
+    return false if attachment.record_type.blank?
+
+    # Attachment itself
+    return true if EffectiveResources.authorized?(self, :show, attachment)
+
     # DO NOT USE .blank? or .present? here. They return incorrect values.
     return false if attachment.record.nil?
 
-    # Associated Record
     record = attachment.record
     return true if authorized?(record)
 
     # ActionText::RichText
     resource = record.record if record.respond_to?(:record)
     return true if authorized?(resource)
-
-    # Attachment itself
-    return true if authorized?(attachment)
 
     false
   end
