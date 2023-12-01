@@ -14,6 +14,13 @@
 module ActiveStorageAuthorization
   extend ActiveSupport::Concern
 
+  AUTHORIZED_EFFECTIVE_DOWNLOADS = [
+    'Effective::CarouselItem', 
+    'Effective::PageBanner', 
+    'Effective::PageSection', 
+    'Effective::Permalink'
+  ]
+
   included do
     rescue_from(Effective::UnauthorizedStorageException, with: :unauthorized_active_storage_request)
   end
@@ -54,11 +61,17 @@ module ActiveStorageAuthorization
   def authorize_active_storage!
     return unless @blob.present?
 
+    # Disable strict loading and let the @blob just pull :attachments
+    @blob.strict_loading!(false) if @blob.try(:strict_loading?)
+
     # If the blob is not attached to anything, permit the blob
     return true if @blob.attachments.blank?
 
     # If the blob is an ActiveStorage::Variant it's been previously authorized
     return true if @blob.attachments.any? { |attachment| authorized_variant_download?(attachment) }
+
+    # If the blob is a known good effective class fast path it
+    return true if @blob.attachments.any? { |attachment| authorized_effective_download?(attachment) }
 
     # If we are authorized on any attached record, permit the download
     return true if @blob.attachments.any? { |attachment| authorized_attachment_download?(attachment) }
@@ -104,6 +117,12 @@ module ActiveStorageAuthorization
   # But these ones don't belong_to any record
   def authorized_variant_download?(attachment)
     attachment.record_type == 'ActiveStorage::VariantRecord'
+  end
+
+  # These are always public images
+  # Fast path them so we don't have to load any user for a permission check
+  def authorized_effective_download?(attachment)
+    AUTHORIZED_EFFECTIVE_DOWNLOADS.include?(attachment.record_type)
   end
 
   # This is a has_one_attached or has_many_attached record
