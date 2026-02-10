@@ -54,7 +54,7 @@ module ActiveStorageAuthorization
   private
 
   def set_download_blob
-    @blob ||= ActiveStorage::Blob.where(key: decode_verified_key().try(:dig, :key)).first
+    @blob ||= ActiveStorage::Blob.includes(:attachments, :active_storage_extensions).where(key: decode_verified_key().try(:dig, :key)).first
   end
 
   # Authorize the current blob and prevent it from being served if unauthorized

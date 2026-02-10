@@ -30,10 +30,22 @@ module EffectiveStorage
 
           ActiveStorage::Blobs::RedirectController.class_eval do
             before_action :authorize_active_storage_redirect!, only: [:show]
+
+            private
+
+            def blob_scope
+              ActiveStorage::Blob.includes(:attachments, :active_storage_extensions)
+            end
           end
 
           ActiveStorage::Representations::RedirectController.class_eval do
             before_action :authorize_active_storage_redirect!, only: [:show]
+
+            private
+
+            def blob_scope
+              ActiveStorage::Blob.scope_for_strict_loading.includes(:attachments, :active_storage_extensions)
+            end
           end
         end
       end
