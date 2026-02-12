@@ -14,12 +14,12 @@
 module ActiveStorageAuthorization
   extend ActiveSupport::Concern
 
-  AUTHORIZED_EFFECTIVE_DOWNLOADS = [
-    'Effective::CarouselItem', 
-    'Effective::PageBanner', 
-    'Effective::PageSection', 
+  AUTHORIZED_EFFECTIVE_DOWNLOADS = Set.new([
+    'Effective::CarouselItem',
+    'Effective::PageBanner',
+    'Effective::PageSection',
     'Effective::Permalink'
-  ]
+  ]).freeze
 
   included do
     rescue_from(Effective::UnauthorizedStorageException, with: :unauthorized_active_storage_request)
@@ -54,7 +54,7 @@ module ActiveStorageAuthorization
   private
 
   def set_download_blob
-    @blob ||= ActiveStorage::Blob.where(key: decode_verified_key().try(:dig, :key)).first
+    @blob ||= ActiveStorage::Blob.includes(:attachments, :active_storage_extensions).where(key: decode_verified_key().try(:dig, :key)).first
   end
 
   # Authorize the current blob and prevent it from being served if unauthorized
@@ -73,11 +73,11 @@ module ActiveStorageAuthorization
     # If the blob is a known good effective class fast path it
     return true if @blob.attachments.any? { |attachment| authorized_effective_download?(attachment) }
 
+    # If the blob has been marked public, permit the download (in-memory check, no queries)
+    return true if @blob.permission_public?
+
     # If we are authorized on any attached record, permit the download
     return true if @blob.attachments.any? { |attachment| authorized_attachment_download?(attachment) }
-
-    # If the blob has been given permission using Mark Public
-    return true if authorized?(@blob)
 
     # Otherwise raise a 404 Not Found and block the download
     head(:not_found)
