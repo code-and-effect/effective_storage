@@ -42,13 +42,7 @@ module ActiveStorageAuthorization
   # Send an ExceptionNotification email with the unauthorized details
   # This is not visible to users
   def unauthorized_active_storage_request(exception)
-
-    if defined?(ExceptionNotifier)
-      data = { 'current_user_id': current_user&.id || 'none' }.merge(@blob&.attributes || {})
-      ExceptionNotifier.notify_exception(exception, env: request.env, data: data)
-    else
-      raise(exception)
-    end
+    EffectiveResources.send_error(exception, current_user_id: (current_user&.id || 'none'))
   end
 
   private
