@@ -15,9 +15,12 @@ module ActiveStorageAuthorization
   extend ActiveSupport::Concern
 
   AUTHORIZED_EFFECTIVE_DOWNLOADS = Set.new([
+    'Effective::Alert',
+    'Effective::BannerAd',
     'Effective::CarouselItem',
     'Effective::PageBanner',
     'Effective::PageSection',
+    'Effective::PageSegment',
     'Effective::Permalink'
   ]).freeze
 
