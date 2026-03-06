@@ -45,7 +45,14 @@ module ActiveStorageAuthorization
   # Send an ExceptionNotification email with the unauthorized details
   # This is not visible to users
   def unauthorized_active_storage_request(exception)
-    EffectiveResources.send_error(exception, current_user_id: (current_user&.id || 'none'))
+    host = request.host rescue 'unknown'
+    request_url = "#{host}#{request.path rescue ''}"
+
+    EffectiveResources.send_error(exception,
+      current_user_id: (current_user&.id || 'none'),
+      request_url: request_url,
+      referer: request.referer.to_s
+    )
   end
 
   private
@@ -90,11 +97,16 @@ module ActiveStorageAuthorization
 
     return if skip_notification?(record || resource || @blob)
 
+    host = request.host rescue 'unknown'
+    request_url = "#{host}#{request.path rescue ''}"
+
     error = [
       "unauthorized active storage request for #{@blob.filename}",
       ("on #{record.class.name} #{record.id}" if record.present?),
       ("from #{resource.class.name} #{resource.id}" if resource.present?),
-      ("with current_user #{current_user.class.name } #{current_user&.id}"),
+      ("with current_user #{current_user.class.name} #{current_user&.id}"),
+      ("at #{request_url}"),
+      ("referer #{request.referer}" if request.referer.present?),
     ].compact.join(' ')
 
     resolution = "Missing can?(:show, #{(resource || record || attachment).class.name})"
