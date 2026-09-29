@@ -87,7 +87,7 @@ module ActiveStorageAuthorization
     head(:not_found)
 
     # Raise an exception to log unauthorized request
-    raise_exception()
+    raise_exception() if current_user.present?
   end
 
   def raise_exception
